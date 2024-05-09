@@ -1,13 +1,4 @@
-"""
-@Project        ：tea_server_api
-@File           ：dao.py
-@IDE            ：PyCharm
-@Author         ：李延
-@Date           ：2024/5/7 下午5:56
-@Description    ：
-"""
-
-from typing import Generic, Type, TypeVar, Optional, List
+from typing import Generic, List, Optional, Type, TypeVar
 
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
@@ -27,9 +18,7 @@ UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 FilterSchemaType = TypeVar("FilterSchemaType", bound=BaseModel)
 
 
-class BaseDao(
-    Generic[ModelType, SchemaType, CreateSchemaType, UpdateSchemaType, FilterSchemaType]
-):
+class BaseDao(Generic[ModelType, SchemaType, CreateSchemaType, UpdateSchemaType, FilterSchemaType]):
     def __init__(self, model: Type[ModelType], schema_model: Type[SchemaType]):
         """
         初始化基础CRUD类，用于实现增删改查的默认方法。
@@ -43,11 +32,10 @@ class BaseDao(
         """
         根据Pydantic模型创建数据库记录。
         """
-        obj_data = jsonable_encoder(schema, exclude_unset=True)
-        obj = await self.model.create(**obj_data)
-        return self.schema_model.model_validate_json(obj)
+        obj = await self.model.create(**schema.model_dump(exclude_unset=True))
+        return self.schema_model.model_validate(obj.__dict__)
 
-    async def delete(self, schema: FilterSchemaType) -> int:
+    async def delete(self, schema: SchemaType) -> int:
         """
         根据Pydantic模型删除符合条件的记录。
         """
@@ -63,30 +51,26 @@ class BaseDao(
         update_data = jsonable_encoder(schema, exclude_unset=True)
         await obj.update_from_dict(update_data)
         await obj.save()
-        return self.schema_model.model_validate_json(obj)
+        return self.schema_model.model_validate(obj.__dict__)
 
-    async def get(self, schema: FilterSchemaType) -> Optional[SchemaType]:
+    async def get(self, schema: SchemaType) -> Optional[SchemaType]:
         """
         根据Pydantic模型查询单个记录，并返回Pydantic模型。
         """
         filter_data = schema.model_dump(exclude_unset=True)
         obj = await self.model.get_or_none(**filter_data, is_deleted=False)
         if obj:
-            return self.schema_model.model_validate_json(obj)
+            return self.schema_model.model_validate(obj.__dict__)
         return None
 
-    async def list(
-            self, schema: FilterSchemaType, skip: int = 1, limit: int = 10
-    ) -> List[SchemaType]:
+    async def list(self, schema: FilterSchemaType, skip: int = 1, limit: int = 10) -> List[SchemaType]:
         """
         根据Pydantic模型分页查询记录，并返回Pydantic模型列表。
         """
         filter_data = schema.model_dump(exclude_unset=True)
-        query_set = (
-            self.model.filter(**filter_data, is_deleted=False).offset(skip).limit(limit)
-        )
+        query_set = self.model.filter(**filter_data, is_deleted=False).offset(skip).limit(limit)
         objs = await query_set.all()
-        return [self.schema_model.model_validate_json(obj) for obj in objs]
+        return [self.schema_model.model_validate(obj.__dict__) for obj in objs]
 
     async def count(self, schema: FilterSchemaType) -> int:
         """
@@ -114,13 +98,9 @@ class BaseDao(
         """
         根据Pydantic模型列表批量创建记录，并返回Pydantic模型列表。
         """
-        obj_data_list = [
-            jsonable_encoder(schema, exclude_unset=True) for schema in schemas
-        ]
-        objs = await self.model.bulk_create(
-            [self.model(**obj_data) for obj_data in obj_data_list]
-        )
-        return [self.schema_model.model_validate_json(obj) for obj in objs]
+        obj_data_list = [jsonable_encoder(schema, exclude_unset=True) for schema in schemas]
+        objs = await self.model.bulk_create([self.model(**obj_data) for obj_data in obj_data_list])
+        return [self.schema_model.model_validate(obj.__dict__) for obj in objs]
 
     async def bulk_update(self, schemas: List[UpdateSchemaType]) -> List[SchemaType]:
         """
@@ -136,11 +116,9 @@ class BaseDao(
             objs.append(obj)
             update_fields.update(update_data.keys())
         await self.model.bulk_update(objs, fields=list(update_fields))
-        return [self.schema_model.model_validate_json(obj) for obj in objs]
+        return [self.schema_model.model_validate(obj.__dict__) for obj in objs]
 
-    async def paginate(
-            self, schema: FilterSchemaType, page_num: int = 1, page_size: int = 10
-    ):
+    async def paginate(self, schema: FilterSchemaType, page_num: int = 1, page_size: int = 10):
         """
         根据Pydantic模型分页查询记录，并返回分页信息和Pydantic模型列表。
         """
@@ -153,7 +131,7 @@ class BaseDao(
             page_num=page_num,
             page_size=page_size,
             data=objs,
-            has_next=has_next
+            has_next=has_next,
         )
 
 

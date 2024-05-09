@@ -1,20 +1,19 @@
 """
-@Project        ：tea_server_api 
+@Project        ：tea_server_api
 @File           ：setup_router.py
-@IDE            ：PyCharm 
+@IDE            ：PyCharm
 @Author         ：李延
-@Date           ：2024/5/8 上午10:51 
+@Date           ：2024/5/8 上午10:51
 @Description    ：
 """
+
 from fastapi import FastAPI
 
-# from controller.auth_controller import AuthRouter
-# from controller.machine_controller import MachineRouter
-# from controller.oper_log_controller import OperRouter
-# from controller.order_controller import OrderRouter
+from modules.machine.controller.machine_controller import MachineRouter
+
 
 controller_list = [
-    # {"router": MachineRouter, "tag": "机器模块"},
+    {"router": MachineRouter, "tag": "机器模块"},
     # {"router": OperRouter, "tag": "操作日志模块"},
     # {"router": OrderRouter, "tag": "订单模块"},
     # {"router": AuthRouter, "tag": "认证模块"}

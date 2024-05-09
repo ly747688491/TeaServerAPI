@@ -1,15 +1,22 @@
 """
-@Project        ：tea_server_api 
+@Project        ：tea_server_api
 @File           ：schema.py
-@IDE            ：PyCharm 
+@IDE            ：PyCharm
 @Author         ：李延
-@Date           ：2024/5/8 上午10:09 
+@Date           ：2024/5/8 上午10:09
 @Description    ：
 """
-from datetime import datetime
-from typing import Optional, List, TypeVar
 
-from pydantic import BaseModel, ConfigDict, field_validator, Field
+from datetime import datetime
+from typing import List, Optional, TypeVar
+
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    field_validator,
+    model_validator,
+)
 from pydantic.alias_generators import to_camel
 
 
@@ -34,10 +41,11 @@ class OnlyIdSchema(BaseModel):
 
 
 class CorePageQuerySchema(BaseModel):
+    model_config = ConfigDict(
+        alias_generator=to_camel, from_attributes=True, extra="forbid"
+    )
     page_num: int = 1
     page_size: int = 10
-    begin_time: Optional[str] = None
-    end_time: Optional[str] = None
 
 
 class ResponseSchema(BaseModel):
@@ -45,7 +53,7 @@ class ResponseSchema(BaseModel):
     msg: Optional[str] = "success"
 
 
-dataT = TypeVar('dataT', bound=BaseModel)
+dataT = TypeVar("dataT", bound=BaseModel)
 
 
 class PageResponseSchema(ResponseSchema):

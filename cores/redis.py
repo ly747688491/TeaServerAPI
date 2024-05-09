@@ -1,16 +1,17 @@
 """
-@Project        ：tea_server_api 
+@Project        ：tea_server_api
 @File           ：redis.py
-@IDE            ：PyCharm 
+@IDE            ：PyCharm
 @Author         ：李延
-@Date           ：2024/5/7 下午5:58 
+@Date           ：2024/5/7 下午5:58
 @Description    ：
 """
+
 from datetime import datetime
 
 from aioredis import Redis
 
-from schemas.machine import VerifyMachineSchema
+from modules.machine.entity.schemas import VerifyMachineSchema
 
 
 def get_tokens_key(uuid: str) -> str:
@@ -44,4 +45,8 @@ class RedisService(Redis):
         )
 
         ex = expireTime - int(datetime.utcnow().timestamp())
-        await self.set(get_tokens_key(id), verify_machine_sh.model_dump_json(exclude_none=True), ex=ex)
+        await self.set(
+            get_tokens_key(id),
+            verify_machine_sh.model_dump_json(exclude_none=True),
+            ex=ex,
+        )
