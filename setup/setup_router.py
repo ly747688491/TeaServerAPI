@@ -10,12 +10,12 @@
 from fastapi import FastAPI
 
 from modules.machine.controller.machine_controller import MachineRouter
-
+from modules.order.controller.order_controller import OrderRouter
 
 controller_list = [
     {"router": MachineRouter, "tag": "机器模块"},
     # {"router": OperRouter, "tag": "操作日志模块"},
-    # {"router": OrderRouter, "tag": "订单模块"},
+    {"router": OrderRouter, "tag": "订单模块"},
     # {"router": AuthRouter, "tag": "认证模块"}
 ]
 

@@ -20,30 +20,12 @@ from pydantic import (
 from pydantic.alias_generators import to_camel
 
 
-class CoreSchema(BaseModel):
-    model_config = ConfigDict(alias_generator=to_camel, from_attributes=True)
-
-    id: Optional[str] = None
-    description: Optional[str] = None
-    create_time: Optional[datetime] = None
-    update_time: Optional[datetime] = None
-    is_deleted: Optional[bool] = None
-
-    @classmethod
-    @field_validator("createTime", "updateTime")
-    def format_time(cls, value: datetime) -> str:
-        if value:
-            return value.strftime("%Y-%m-%d %H:%M:%S")
-
-
 class OnlyIdSchema(BaseModel):
-    id: Optional[str] = None
+    id: Optional[str | int] = None
 
 
 class CorePageQuerySchema(BaseModel):
-    model_config = ConfigDict(
-        alias_generator=to_camel, from_attributes=True, extra="forbid"
-    )
+    model_config = ConfigDict(alias_generator=to_camel, from_attributes=True, extra="forbid")
     page_num: int = 1
     page_size: int = 10
 

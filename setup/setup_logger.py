@@ -1,11 +1,12 @@
 """
-@Project        ：tea_server_api 
+@Project        ：tea_server_api
 @File           ：setup_logger.py
-@IDE            ：PyCharm 
+@IDE            ：PyCharm
 @Author         ：李延
-@Date           ：2024/5/8 上午10:50 
+@Date           ：2024/5/8 上午10:50
 @Description    ：
 """
+
 import logging
 import os
 
@@ -36,6 +37,26 @@ class InterceptHandler(logging.Handler):
         logger.opt(depth=depth, exception=record.exc_info).log(level, record.getMessage())
 
 
+# 日志配置
+logging_config = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "level": "INFO",
+        },
+    },
+    "loggers": {
+        "tortoise": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+    },
+}
+
+
 def logger_init():
     """日志初始化"""
     logging.basicConfig(handlers=[InterceptHandler()], level=0)
@@ -48,3 +69,5 @@ def logger_init():
         retention=setting.LOGGER_RETENTION,  # 日志保留的时间: 超出将删除最早的日志. 例如 ["1 days"]
         enqueue=True,  # 在多进程同时往日志文件写日志的时候使用队列达到异步功效
     )
+    # 应用日志配置
+    logging.config.dictConfig(logging_config)

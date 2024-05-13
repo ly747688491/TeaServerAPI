@@ -23,4 +23,9 @@ __pycache__/
 # 忽略缓存文件
 .cached/
 
+# 忽略编译后的文件
+*/__pycache__/
+
+
+# 忽略配置文件
 configs/

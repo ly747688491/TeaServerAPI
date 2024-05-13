@@ -3,8 +3,15 @@ from fastapi import FastAPI
 from fastapi.concurrency import asynccontextmanager
 
 from config.setting import setting
-from setup import setup_cors, setup_database, setup_exception, setup_middleware, setup_mount, setup_redis, setup_router, \
-    logger_init
+from setup import (
+    logger_init,
+    setup_cors,
+    setup_database,
+    setup_exception,
+    setup_mount,
+    setup_redis,
+    setup_router,
+)
 from setup.setup_logger import logger
 
 
@@ -37,7 +44,7 @@ app = FastAPI(
 )
 
 setup_cors(app)
-setup_middleware(app)
+# setup_middleware(app)
 
 if __name__ == "__main__":
     uvicorn.run(

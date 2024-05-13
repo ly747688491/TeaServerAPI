@@ -7,11 +7,10 @@
 @Description    ：
 """
 
-from typing import Optional
+from typing import List, Optional
 
-from pydantic import BaseModel
-
-from cores.schema import CorePageQuerySchema, CoreSchema
+from pydantic import BaseModel, ConfigDict
+from pydantic.alias_generators import to_camel
 
 
 class MachineSchema(BaseModel):
@@ -19,26 +18,15 @@ class MachineSchema(BaseModel):
     机器创建更新模型
     """
 
-    unique_identifier: Optional[str]
-    machine_name: Optional[str]
-    machine_address: Optional[str]
-    machine_type: Optional[str]
-    raspberry_ip: Optional[str]
-    raspberry_mac: Optional[str]
-    machine_status: Optional[str]
+    model_config = ConfigDict(alias_generator=to_camel, from_attributes=True)
 
-
-class MachineDetailSchema(MachineSchema, CoreSchema):
-    """
-    机器详情模型
-    """
-
-    pass
-
-
-class MachinePageQuerySchema(CorePageQuerySchema):
-    machine_name: Optional[str] = None
-    machine_type: Optional[str] = None
+    id: Optional[int] = None
+    name: Optional[str]
+    machine_code: Optional[str] = None
+    status: Optional[int]
+    sort: Optional[int]
+    raspberry_ip: Optional[str] = None
+    raspberry_mac: Optional[str] = None
 
 
 class DeviceSchema(BaseModel):
@@ -46,67 +34,17 @@ class DeviceSchema(BaseModel):
     设备创建更新模型
     """
 
-    device_name: Optional[str]
-    machine: Optional[str]
-    device_type: Optional[str]
-    operational_status: Optional[str]
-    gpio_pins: Optional[str]
-    current_material: Optional[str]
-    is_faulty: Optional[bool]
+    model_config = ConfigDict(alias_generator=to_camel, from_attributes=True)
 
-
-class DeviceDetailSchema(DeviceSchema, CoreSchema):
-    """
-    设备详情模型
-    """
-
-    pass
-
-
-class DevicePageQuerySchema(CorePageQuerySchema):
-    device_name: Optional[str] = None
-    device_type: Optional[str] = None
-    machine: Optional[str] = None
-
-
-class MaterialSchema(BaseModel):
-    """
-    物料基础模型
-    """
-
-    material_name: Optional[str]
-    material_quantity: Optional[str]
-    material_unit: Optional[str]
-
-
-class MaterialDetailSchema(MaterialSchema, CoreSchema):
-    """
-    物料详情模型
-    """
-
-    pass
-
-
-class MaterialPageQuerySchema(CorePageQuerySchema):
-    material_name: Optional[str] = None
-
-
-class DeviceMaterialSchema(BaseModel):
-    """
-    设备物料关联模型
-    """
-
-    device: Optional[str]
-    material: Optional[str]
-    is_empty: Optional[bool]
-
-
-class DeviceMaterialDetailSchema(DeviceMaterialSchema, CoreSchema):
-    """
-    设备物料关联详情模型
-    """
-
-    pass
+    id: Optional[int] = None
+    name: Optional[str] = None
+    machine_id: Optional[int]
+    type: Optional[int]
+    status: Optional[int]
+    config: Optional[dict] = None
+    matter_code: Optional[str]
+    stock: Optional[int]
+    sort: Optional[int] = None
 
 
 class VerifyMachineSchema(BaseModel):
@@ -118,3 +56,11 @@ class VerifyMachineSchema(BaseModel):
 class AuthMachine(BaseModel):
     id: Optional[str] = None
     unique_identifier: Optional[str] = None
+
+
+class MachineDetailSchema(MachineSchema):
+    """
+    机器详情模型
+    """
+
+    devices: Optional[List[DeviceSchema]] = None
