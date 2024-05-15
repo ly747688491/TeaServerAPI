@@ -30,9 +30,9 @@ class Setting(BaseSettings):
     UVICORN_RELOAD: bool = True
 
     API_PREFIX: str = "/dev-api"  # 接口前缀
-    DOCS_URL: str = "/dev-api/docs"  # 文档地址 默认为docs
-    REDOC_URL: Optional[str] = "/dev-api/redoc"  # redoc 文档
-    OPENAPI_URL: str = "/dev-api/openapi.json"  # 文档关联请求数据接口
+    DOCS_URL: str = "/docs"  # 文档地址 默认为docs
+    REDOC_URL: Optional[str] = "/redoc"  # redoc 文档
+    OPENAPI_URL: str = "/openapi.json"  # 文档关联请求数据接口
     STATIC_DIR: str = "static"  # 静态文件目录
     GLOBAL_ENCODING: str = "utf-8"  # 全局编码
     # 跨域请求

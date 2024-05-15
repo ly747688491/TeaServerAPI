@@ -46,11 +46,20 @@ logging_config = {
             "class": "logging.StreamHandler",
             "level": "INFO",
         },
+        "intercept": {
+            "class": "setup.setup_logger.InterceptHandler",
+            "level": "INFO",
+        },
     },
     "loggers": {
         "tortoise": {
-            "handlers": ["console"],
-            "level": "INFO",
+            "handlers": ["console", "intercept"],
+            "level": "DEBUG",
+            "propagate": True,
+        },
+        "uvicorn": {
+            "handlers": ["intercept"],
+            "level": "DEBUG",
             "propagate": False,
         },
     },

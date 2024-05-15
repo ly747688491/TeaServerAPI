@@ -7,37 +7,29 @@
 @Description    ：
 """
 
-from cores.dao import BaseDao, create_dao
+
+# def get_config_dao():
+#     return create_dao(model=OrderDetails, schema_model=OrderSchema)
+
 from cores.schema import OnlyIdSchema
 from modules.machine.entity.models import Machine
-from modules.machine.service.machine_service import get_machine_dao
-from modules.order.entity.models import OrderDetails
-from modules.order.entity.schemas import OrderSchema
+from modules.order.entity.models import OrderGoods
+from modules.order.entity.schemas import OrderGoodsSchema, OrderListQuerySchema
 
 
-def get_config_dao():
-    return create_dao(model=OrderDetails, schema_model=OrderSchema)
-
-
-class OrderService:
+class OrderGoodsService:
     def __init__(self):
-        self.schema = OrderSchema
+        self.schema = OrderGoodsSchema
+        self.model = OrderGoods
 
-    async def submit_order(self, order_data: OrderSchema):
+    async def get_order_goods(self, order_list: OrderListQuerySchema):
         """
-        提交订单
-        :param order_data:
-        :param machine_dao:
+        获取订单商品
+        :param order_id:
         :return:
         """
-        try:
-            id_schema = OnlyIdSchema(id=order_data.machine_id)
-            filter_data = id_schema.model_dump(exclude_unset=True)
-            obj = await Machine.get_or_none(**filter_data, status=1)
-            if obj is None:
-                return None
-            order_data.machine_id = obj.machine_code
-            return order_data
-        except Exception as e:
-            print(e)
-            return None
+        for order in order_list.order_list:
+            order_data = await self.model.get_or_none(id=order.id)
+            machine_data = await Machine.get_or_none(id=order.machine_id)
+            if order_data and machine_data:
+                pass

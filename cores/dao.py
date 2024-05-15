@@ -58,7 +58,7 @@ class BaseDao(Generic[ModelType, SchemaType, CreateSchemaType, UpdateSchemaType,
         根据Pydantic模型查询单个记录，并返回Pydantic模型。
         """
         filter_data = schema.model_dump(exclude_unset=True)
-        obj = await self.model.get_or_none(**filter_data, is_deleted=False)
+        obj = await self.model.get_or_none(**filter_data, status=1)
         if obj:
             return self.schema_model.model_validate(obj.__dict__)
         return None

@@ -9,21 +9,19 @@
 
 from fastapi import APIRouter, Depends
 
-from cores.dao import BaseDao
 from cores.rabbitmq import RabbitMQService
 from cores.response import ResponseUtil
-from cores.schema import CoreResponseSchema, OnlyIdSchema, ResponseSchema
-from modules.machine.service.machine_service import get_machine_dao
-from modules.order.entity.schemas import OrderSchema
-from modules.order.service.order_service import OrderService
+from cores.schema import CoreResponseSchema, ResponseSchema
+from modules.order.entity.schemas import OrderListQuerySchema, OrderQuerySchema
+from modules.order.service.order_service import OrderGoodsService
 
 OrderRouter = APIRouter(prefix="/order", tags=["订单模块"])
 
 
-@OrderRouter.post("/", response_model=CoreResponseSchema, summary="提交订单")
-async def get_order(order_info: OrderSchema, order_service: OrderService = Depends()):
+@OrderRouter.post("/queued", response_model=CoreResponseSchema, summary="提交订单")
+async def get_order(order_query: OrderListQuerySchema, order_service: OrderGoodsService = Depends()):
     # try:
-    info = await order_service.submit_order(order_info)
+    info = await order_service.get_order_goods(order_query)
     if info:
         RabbitMQService.send_message(queue_name=info.machine_id, message=info.material)
         # 返回正常响应

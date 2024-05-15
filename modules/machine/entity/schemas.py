@@ -9,7 +9,7 @@
 
 from typing import List, Optional
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from pydantic.alias_generators import to_camel
 
 
@@ -20,13 +20,13 @@ class MachineSchema(BaseModel):
 
     model_config = ConfigDict(alias_generator=to_camel, from_attributes=True)
 
-    id: Optional[int] = None
-    name: Optional[str]
-    machine_code: Optional[str] = None
-    status: Optional[int]
-    sort: Optional[int]
-    raspberry_ip: Optional[str] = None
-    raspberry_mac: Optional[str] = None
+    id: Optional[int] = Field(None, alias="id")
+    name: Optional[str] = Field(None, alias="name")
+    machine_code: Optional[str] = Field(None, alias="machine_code")
+    status: Optional[int] = Field(None, alias="status")
+    sort: Optional[int] = Field(None, alias="sort")
+    raspberry_ip: Optional[str] = Field(None, alias="raspberry_ip")
+    raspberry_mac: Optional[str] = Field(None, alias="raspberry_mac")
 
 
 class DeviceSchema(BaseModel):
@@ -36,15 +36,15 @@ class DeviceSchema(BaseModel):
 
     model_config = ConfigDict(alias_generator=to_camel, from_attributes=True)
 
-    id: Optional[int] = None
-    name: Optional[str] = None
-    machine_id: Optional[int]
-    type: Optional[int]
-    status: Optional[int]
-    config: Optional[dict] = None
-    matter_code: Optional[str]
-    stock: Optional[int]
-    sort: Optional[int] = None
+    id: Optional[int] = Field(None, alias="id")
+    name: Optional[str] = Field(None, alias="name")
+    machine_id: Optional[int] = Field(None, alias="machine_id")
+    type: Optional[int] = Field(None, alias="type")
+    status: Optional[int] = Field(None, alias="status")
+    config: Optional[dict] = Field(None, alias="config")
+    matter_code: Optional[str] = Field(None, alias="matter_code")
+    stock: Optional[int] = Field(None, alias="stock")
+    sort: Optional[int] = Field(None, alias="sort")
 
 
 class VerifyMachineSchema(BaseModel):

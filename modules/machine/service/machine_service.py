@@ -33,11 +33,8 @@ class MachineService:
                 "devices"
             ):
                 machine_data = MachineSchema.model_validate(machine_info.__dict__)
-                print(machine_data)
                 devices_data = self._get_devices_for_machine(machine_info)
-                print(devices_data)
-                machine_detail = MachineDetailSchema(**machine_data.dict(), devices=devices_data)
-                print(machine_detail)
+                machine_detail = MachineDetailSchema(**machine_data.model_dump(), devices=devices_data)
                 return machine_detail
         except Exception as e:
             print(e)

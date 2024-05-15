@@ -7,30 +7,21 @@
 @Description    ：
 """
 
-from enum import Enum
-
-from tortoise import fields
-
-from cores.model import CoreModel
+from tortoise import Model, fields
 
 
-class OrderStatus(str, Enum):
-    PENDING = "pending"
-    PROCESSING = "processing"
-    QUEUED = "queued"
-    COMPLETED = "completed"
-    CANCELLED = "cancelled"
-
-
-class OrderDetails(CoreModel):
-    status = fields.CharEnumField(
-        OrderStatus, default=OrderStatus.PENDING, null=False, index=True, description="订单状态"
-    )
-    machine = fields.ForeignKeyField(
-        "models.Machine", related_name="orders", null=True, on_delete=fields.SET_NULL, description="关联机器"
-    )
-    material = fields.TextField(default="", null=False, description="所需材料")
+class OrderGoods(Model):
+    id = fields.IntField(pk=True)
+    machine_id = fields.IntField(null=True, source_field="machineId")
+    order_id = fields.IntField(null=True, source_field="orderId")
+    device_goods_id = fields.IntField(null=True, source_field="deviceGoodsId")
+    device_goods_option_id = fields.IntField(null=True, source_field="deviceGoodsOptionId")
+    goods_id = fields.IntField(null=True, source_field="goodsId")
+    goods_name = fields.CharField(max_length=100, null=True, source_field="goodsName")
+    goods_option_name = fields.CharField(max_length=255, null=True, source_field="goodsOptionName")
+    matter_codes = fields.CharField(max_length=255, null=True, source_field="matterCodes")
+    status = fields.IntField(null=True)
 
     class Meta:
-        table = "db_order"
+        table = "db_order_goods"
         table_description = "订单信息表"

@@ -38,6 +38,7 @@ app = FastAPI(
     description=setting.DESCRIPTION,
     version=setting.VERSION,
     lifespan=lifespan,
+    root_path=setting.API_PREFIX,
     docs_url=setting.DOCS_URL,
     openapi_url=setting.OPENAPI_URL,
     redoc_url=setting.REDOC_URL,
