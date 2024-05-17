@@ -57,7 +57,7 @@ class Setting(BaseSettings):
 
     # Database
     DB_ECHO: bool = False  # 是否打印数据库日志 (可看到创建表、表数据增删改查的信息)
-    DB_HOST: str = "124.221.43.140"
+    DB_HOST: str = "127.0.0.1"
     DB_PORT: int = 3306
     DB_USER: str = "milktea"
     DB_PASSWORD: str = "eNR6zXXi24rYG6TY"
@@ -69,7 +69,7 @@ class Setting(BaseSettings):
     ]
 
     # Redis
-    REDIS_HOST: str = "43.134.79.6"
+    REDIS_HOST: str = "127.0.0.1"
     REDIS_PORT: int = 6379
     REDIS_PASSWORD: str = "Openai**@2023%_"
     REDIS_DATABASE: int = 1
@@ -77,10 +77,10 @@ class Setting(BaseSettings):
     REDIS_URL: str = f"redis://:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}/{REDIS_DATABASE}?encoding=utf-8"
 
     # RabbitMq
-    RABBITMQ_HOST: str = "101.126.69.153"
+    RABBITMQ_HOST: str = "127.0.0.1"
     RABBITMQ_PORT: int = 5672
     RABBITMQ_USERNAME: str = "tea_serve"
-    RABBITMQ_PASSWORD: str = "sd@6789"
+    RABBITMQ_PASSWORD: str = "******"
     RABBITMQ_VHOST: str = "/teapi"
     RABBITMQ_EXCHANGE: str = "exchange"
 

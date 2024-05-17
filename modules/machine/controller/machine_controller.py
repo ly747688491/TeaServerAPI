@@ -7,13 +7,16 @@
 @Description    ：
 """
 
+
 from fastapi import APIRouter, Depends
 
 from cores.dao import BaseDao
+from cores.rabbitmq import RabbitMQService
 from cores.response import ResponseUtil
-from cores.schema import CoreResponseSchema, DetailResponseSchema, ResponseSchema
+from cores.schema import CoreResponseSchema, DetailResponseSchema, OnlyIdSchema, ResponseSchema
 from modules.machine.entity.schemas import MachineSchema
 from modules.machine.service.machine_service import MachineService, get_machine_dao
+from setup.setup_logger import logger
 
 MachineRouter = APIRouter(prefix="/machine", tags=["机器模块"])
 
@@ -53,3 +56,18 @@ async def get_machine_by_id(machine_id: str, machine_dao: BaseDao = Depends(get_
     except Exception as e:
         result = ResponseSchema(code=500, msg=e.args[0])
         return ResponseUtil.error(data=result)
+
+
+@MachineRouter.post("/clear/{machine_id}", response_model=CoreResponseSchema, summary="清洗机器")
+async def clear_machine(machine_id: str, device_list: list[OnlyIdSchema], machine_service: MachineService = Depends()):
+    """
+    清洗机器
+    :param machine_id: 机器id
+    :param machine_service: 机器服务
+    :return:
+    """
+    logger.info(f"清洗机器: {machine_id}")
+    logger.info(f"清洗设备: {device_list}")
+    result = await machine_service.get_device_list(machine_id, device_list)
+    RabbitMQService.send_message(queue_name=machine_id, message=device_list)
+    return ResponseUtil.success()

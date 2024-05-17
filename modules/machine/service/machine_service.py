@@ -7,7 +7,9 @@
 @Description    ：
 """
 
+
 from cores.dao import create_dao
+from cores.schema import OnlyIdSchema
 from modules.machine.entity.models import Machine
 from modules.machine.entity.schemas import DeviceSchema, MachineDetailSchema, MachineSchema
 
@@ -43,3 +45,16 @@ class MachineService:
     def _get_devices_for_machine(self, machine: Machine):
         devices = machine.devices
         return [DeviceSchema.model_validate(device.__dict__) for device in devices]
+
+    async def get_device_list(self, machine_id: int, device_list: list[OnlyIdSchema]):
+        try:
+            if machine_info := await self.machine_model.get(machine_code=machine_id, status=1).prefetch_related(
+                "devices"
+            ):
+                machine_data = MachineSchema.model_validate(machine_info.__dict__)
+                devices_data = self._get_devices_for_machine(machine_info)
+                machine_detail = MachineDetailSchema(**machine_data.model_dump(), devices=devices_data)
+                return machine_detail
+        except Exception as e:
+            print(e)
+            return None
