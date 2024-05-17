@@ -28,4 +28,7 @@ __pycache__/
 
 
 # 忽略配置文件
-configs/
+config/setting.py
+
+# 忽略编译后的文件
+*/__pycache__/
